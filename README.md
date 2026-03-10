@@ -59,3 +59,13 @@ It creates "God classes" with mixed responsibilities. For example, when the car 
 The project becomes highly coupled to concrete classes. If CarServiceImpl depended directly on a specific repository class, migrating to a new database would force me to rewrite the service logic.
 
 Testing becomes a lot harder. Without interfaces, unit tests are forced to rely on real implementations, making the test setup complex and brittle.
+
+Reflection module 4
+
+This TDD flow is useful for me, Wrting the failed test first made the requirements clearer. It also reduced ambiguity before implementation thus made me implement and verify each step quicker.
+
+Fast :  Yes, unit test with in-memory data makes it quick.
+Independent: Yes, the results are deterministic in current setup.
+Repeatable: Yes, results are deterministic in current setup.
+Self-validating: Yes, assertions are explicit
+Timely: Yes, test are added after implementation step.
