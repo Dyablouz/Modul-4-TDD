@@ -19,6 +19,7 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -75,20 +76,26 @@ class PaymentServiceTest {
 
     @Test
     void testSetStatusToSuccess() {
-        Payment payment = new Payment("payment-2", "BANK_TRANSFER", bankTransferPaymentData);
+        doAnswer(invocation -> invocation.getArgument(0))
+                .when(paymentRepository).save(any(Payment.class));
+        Payment payment = paymentService.addPayment(order, "BANK_TRANSFER", bankTransferPaymentData);
 
         Payment result = paymentService.setStatus(payment, "SUCCESS");
 
         assertEquals("SUCCESS", result.getStatus());
+        assertEquals("SUCCESS", order.getStatus());
     }
 
     @Test
     void testSetStatusToRejected() {
-        Payment payment = new Payment("payment-3", "BANK_TRANSFER", bankTransferPaymentData);
+        doAnswer(invocation -> invocation.getArgument(0))
+                .when(paymentRepository).save(any(Payment.class));
+        Payment payment = paymentService.addPayment(order, "BANK_TRANSFER", bankTransferPaymentData);
 
         Payment result = paymentService.setStatus(payment, "REJECTED");
 
         assertEquals("REJECTED", result.getStatus());
+        assertEquals("FAILED", order.getStatus());
     }
 
     @Test
