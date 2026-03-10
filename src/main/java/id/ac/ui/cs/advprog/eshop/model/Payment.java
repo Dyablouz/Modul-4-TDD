@@ -9,6 +9,20 @@ import java.util.Map;
 @Getter
 @Setter
 public class Payment {
+    private static final String METHOD_VOUCHER_CODE = "VOUCHER_CODE";
+    private static final String METHOD_BANK_TRANSFER = "BANK_TRANSFER";
+
+    private static final String STATUS_SUCCESS = "SUCCESS";
+    private static final String STATUS_REJECTED = "REJECTED";
+
+    private static final String KEY_VOUCHER_CODE = "voucherCode";
+    private static final String KEY_BANK_NAME = "bankName";
+    private static final String KEY_REFERENCE_CODE = "referenceCode";
+
+    private static final int VOUCHER_LENGTH = 16;
+    private static final int VOUCHER_REQUIRED_DIGITS = 8;
+    private static final String VOUCHER_PREFIX = "ESHOP";
+
     private String id;
     private String method;
     private String status;
@@ -22,25 +36,26 @@ public class Payment {
     }
 
     private String evaluateInitialStatus(String method, Map<String, String> paymentData) {
-        if ("VOUCHER_CODE".equals(method)) {
-            String voucherCode = paymentData.get("voucherCode");
-            return isVoucherCodeValid(voucherCode) ? "SUCCESS" : "REJECTED";
+        if (METHOD_VOUCHER_CODE.equals(method)) {
+            String voucherCode = paymentData.get(KEY_VOUCHER_CODE);
+            return isVoucherCodeValid(voucherCode) ? STATUS_SUCCESS : STATUS_REJECTED;
         }
 
-        if ("BANK_TRANSFER".equals(method)) {
-            String bankName = paymentData.get("bankName");
-            String referenceCode = paymentData.get("referenceCode");
+        if (METHOD_BANK_TRANSFER.equals(method)) {
+            String bankName = paymentData.get(KEY_BANK_NAME);
+            String referenceCode = paymentData.get(KEY_REFERENCE_CODE);
             if (isNullOrEmpty(bankName) || isNullOrEmpty(referenceCode)) {
-                return "REJECTED";
+                return STATUS_REJECTED;
             }
-            return "SUCCESS";
+            return STATUS_SUCCESS;
         }
 
-        return "REJECTED";
+        return STATUS_REJECTED;
     }
 
     private boolean isVoucherCodeValid(String voucherCode) {
-        if (voucherCode == null || voucherCode.length() != 16 || !voucherCode.startsWith("ESHOP")) {
+        if (voucherCode == null || voucherCode.length() != VOUCHER_LENGTH
+                || !voucherCode.startsWith(VOUCHER_PREFIX)) {
             return false;
         }
 
@@ -50,7 +65,7 @@ public class Payment {
                 digitCount++;
             }
         }
-        return digitCount == 8;
+        return digitCount == VOUCHER_REQUIRED_DIGITS;
     }
 
     private boolean isNullOrEmpty(String value) {
