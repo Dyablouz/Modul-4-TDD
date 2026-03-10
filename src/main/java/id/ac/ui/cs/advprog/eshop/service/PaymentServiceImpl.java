@@ -1,5 +1,6 @@
 package id.ac.ui.cs.advprog.eshop.service;
 
+import id.ac.ui.cs.advprog.eshop.enums.OrderStatus;
 import id.ac.ui.cs.advprog.eshop.model.Order;
 import id.ac.ui.cs.advprog.eshop.model.Payment;
 import id.ac.ui.cs.advprog.eshop.repository.PaymentRepository;
@@ -14,8 +15,6 @@ import java.util.UUID;
 public class PaymentServiceImpl implements PaymentService {
     private static final String PAYMENT_STATUS_SUCCESS = "SUCCESS";
     private static final String PAYMENT_STATUS_REJECTED = "REJECTED";
-    private static final String ORDER_STATUS_SUCCESS = "SUCCESS";
-    private static final String ORDER_STATUS_FAILED = "FAILED";
 
     @Autowired
     private PaymentRepository paymentRepository;
@@ -31,9 +30,9 @@ public class PaymentServiceImpl implements PaymentService {
         payment.setStatus(status);
         if (payment.getOrder() != null) {
             if (PAYMENT_STATUS_SUCCESS.equals(status)) {
-                payment.getOrder().setStatus(ORDER_STATUS_SUCCESS);
+                payment.getOrder().setStatus(OrderStatus.SUCCESS.getValue());
             } else if (PAYMENT_STATUS_REJECTED.equals(status)) {
-                payment.getOrder().setStatus(ORDER_STATUS_FAILED);
+                payment.getOrder().setStatus(OrderStatus.FAILED.getValue());
             }
         }
         return payment;
