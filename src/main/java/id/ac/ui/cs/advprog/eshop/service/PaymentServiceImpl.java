@@ -12,18 +12,30 @@ import java.util.UUID;
 
 @Service
 public class PaymentServiceImpl implements PaymentService {
+    private static final String PAYMENT_STATUS_SUCCESS = "SUCCESS";
+    private static final String PAYMENT_STATUS_REJECTED = "REJECTED";
+    private static final String ORDER_STATUS_SUCCESS = "SUCCESS";
+    private static final String ORDER_STATUS_FAILED = "FAILED";
+
     @Autowired
     private PaymentRepository paymentRepository;
 
     @Override
     public Payment addPayment(Order order, String method, Map<String, String> paymentData) {
-        Payment payment = new Payment(generatePaymentId(), method, paymentData);
+        Payment payment = new Payment(generatePaymentId(), order, method, paymentData);
         return paymentRepository.save(payment);
     }
 
     @Override
     public Payment setStatus(Payment payment, String status) {
         payment.setStatus(status);
+        if (payment.getOrder() != null) {
+            if (PAYMENT_STATUS_SUCCESS.equals(status)) {
+                payment.getOrder().setStatus(ORDER_STATUS_SUCCESS);
+            } else if (PAYMENT_STATUS_REJECTED.equals(status)) {
+                payment.getOrder().setStatus(ORDER_STATUS_FAILED);
+            }
+        }
         return payment;
     }
 

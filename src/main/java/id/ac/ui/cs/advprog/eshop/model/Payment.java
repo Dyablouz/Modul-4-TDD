@@ -24,12 +24,18 @@ public class Payment {
     private static final String VOUCHER_PREFIX = "ESHOP";
 
     private String id;
+    private Order order;
     private String method;
     private String status;
     private Map<String, String> paymentData;
 
     public Payment(String id, String method, Map<String, String> paymentData) {
+        this(id, null, method, paymentData);
+    }
+
+    public Payment(String id, Order order, String method, Map<String, String> paymentData) {
         this.id = id;
+        this.order = order;
         this.method = method;
         this.paymentData = new HashMap<>(paymentData);
         this.status = evaluateInitialStatus(method, paymentData);
